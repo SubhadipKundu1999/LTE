@@ -263,7 +263,7 @@ RIGHT:  eNB → 10.195.138.20:2152   (because SGWU_ADVERTISE_IP=10.195.138.20)
 ```bash
 sudo apt update
 sudo apt install -y git curl wget iproute2 iputils-ping net-tools \
-  tcpdump tshark sngrep sctp-tools traceroute
+  tcpdump tshark sngrep libsctp-dev lksctp-tools traceroute
 ```
 
 **Purpose:** cloning, connectivity checks, SCTP/GTP/SIP troubleshooting.
@@ -517,6 +517,14 @@ source .env
 set +a
 docker compose -f 4g-volte-deploy.yaml build
 ```
+If you change the .env file later, the variables already loaded into yourcurrent shell do not automatically update. so to Load everything in .env and export it, then return the shell to normal for that every time there is change in **.env** file do 
+```bash
+set -a
+source .env
+set +a
+```
+
+	
 
 #### srsRAN image on PC-1
 
@@ -561,6 +569,7 @@ TEST_NETWORK=172.22.0.0/24
 DOCKER_HOST_IP=10.195.138.20
 
 SGWU_IP=172.22.0.6
+SGWC_IP=172.22.0.5
 SGWU_ADVERTISE_IP=10.195.138.20
 
 MME_IP=172.22.0.9
