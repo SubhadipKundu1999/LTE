@@ -713,31 +713,237 @@ You need **one subscriber** that matches across:
 > With default `.env` values, **OP `1111…` + K above derive OPc `8e27b6af…`**.  
 > Upstream README examples that show this OPc are consistent with the default K/OP pair.
 
-### 11.2 Provision Open5GS HSS (WebUI)
-
-**Run on:** your laptop/browser (or PC-2)  
-Open: `http://10.195.138.20:9999`
-
-```text
-Username: admin
-Password: 1423
+check parameters in each .env file:
+Run:
+```
+echo "========== PC-1 : srsUE / srsENB =========="
+echo "MCC       = $MCC"
+echo "MNC       = $MNC"
+echo "HOST IP   = $DOCKER_HOST_IP"
+echo "MME IP    = $MME_IP"
+echo "eNB IP    = $SRS_ENB_IP"
+echo "UE IP     = $SRS_UE_IP"
+echo "--------------------------------------------"
+echo "IMSI      = $UE1_IMSI"
+echo "KI        = $UE1_KI"
+echo "OP        = $UE1_OP"
+echo "AMF       = $UE1_AMF"
+echo "IMEI      = $UE1_IMEI"
+echo "IMEISV    = $UE1_IMEISV"
+echo "============================================"
 ```
 
-Add subscriber:
+##PC-2 — Open5GS side
+For .env variables, run:
+```
+cd ~/docker_open5gs
 
-* IMSI: `001011234567895`
-* MSISDN: `9076543210`
-* AMF: `8000`
-* K: `8baf473f2f8fd09487cccbd7097c6862`
-* Operator key type: **OPc** = `8e27b6af0e692e750f32667a3b14605d`  
-  **or** OP = `11111111111111111111111111111111` (do not mix incorrectly)
+set -a
+source .env
+set +a
 
-APN rows (from upstream README):
+echo "========== PC-2 : Open5GS EPC + IMS =========="
+echo "MCC                = $MCC"
+echo "MNC                = $MNC"
+echo "HOST IP            = $DOCKER_HOST_IP"
+echo "MME Docker IP      = $MME_IP"
+echo "SGWU Docker IP     = $SGWU_IP"
+echo "SGWU Advertise IP  = $SGWU_ADVERTISE_IP"
+echo "UE Internet Pool   = $UE_IPV4_INTERNET"
+echo "UE IMS Pool        = $UE_IPV4_IMS"
+echo "================================================"
+```
+The key comparison we ultimately want is:
+```
+PC-1 srsUE                    PC-2 Open5GS subscriber
+------------------            ------------------------
+IMSI 001011234567895   ==     IMSI 001011234567895
+K    8baf...6862       ==     K    8baf...6862
+OP   1111...1111       ==     OP   1111...1111
+AMF  8000              ==     AMF  8000
 
-| APN | Type | QCI | ARP | Notes |
-|-----|------|-----|-----|-------|
-| `internet` | IPv4 | 9 (+ GBR QCIs 1/2 as in upstream table) | 8 | default data |
-| `ims` | IPv4 | 5 (+ GBR QCIs 1/2) | 1 | IMS PDN |
+MCC  001               ==     MCC 001
+MNC  01                ==     MNC 01
+```
+### 11.2 Provision Open5GS HSS (WebUI)
+
+
+
+
+---
+
+#### Open Open5GS WebUI
+
+Browse to:
+
+```text
+http://10.195.138.20:9999
+```
+
+Navigate to:
+
+```
+Subscribers → Add Subscriber
+```
+
+---
+
+#### Subscriber Configuration
+
+| Field | Value |
+|-------|-------|
+| IMSI | `001011234567895` |
+| Subscriber Key (K) | `8baf473f2f8fd09487cccbd7097c6862` |
+| Authentication Management Field (AMF) | `8000` |
+| USIM Type | `OP` |
+| Operator Key (OP) | `11111111111111111111111111111111` |
+| UE-AMBR Downlink | `1 Gbps` |
+| UE-AMBR Uplink | `1 Gbps` |
+| Subscriber Status | Default |
+| Operator Determined Barring | Default |
+
+> **Important**
+>
+> Since the UE configuration uses **OP**, select **OP** in the WebUI. Do **not** select **OPc**.
+
+---
+
+#### Slice Configuration
+
+Use the default slice.
+
+| Field | Value |
+|-------|-------|
+| SST | `1` |
+| SD | Leave Blank |
+| Default S-NSSAI | ✔ Enabled |
+
+---
+
+#### Session Configuration 1 (Internet)
+
+Click **Add Session**.
+
+| Field | Value |
+|-------|-------|
+| DNN / APN | `internet` |
+| Type | `IPv4` |
+| LBO Roaming Allowed | Disabled |
+| 5QI / QCI | `9` |
+| ARP Priority Level | `8` |
+| Capability | Enabled |
+| Vulnerability | Disabled |
+| Session-AMBR Downlink | `1 Gbps` |
+| Session-AMBR Uplink | `1 Gbps` |
+| UE IPv4 Address | Leave Blank |
+| UE IPv6 Address | Leave Blank |
+| SMF IPv4 Address | Leave Blank |
+| SMF IPv6 Address | Leave Blank |
+| PCC Rules | Leave Blank |
+
+This APN provides normal LTE Internet connectivity.
+
+---
+
+#### Session Configuration 2 (IMS)
+
+Click **Add Session** again.
+
+| Field | Value |
+|-------|-------|
+| DNN / APN | `ims` |
+| Type | `IPv4` |
+| LBO Roaming Allowed | Disabled |
+| 5QI / QCI | `5` |
+| ARP Priority Level | `1` |
+| Capability | Enabled |
+| Vulnerability | Disabled |
+| Session-AMBR Downlink | `1 Gbps` |
+| Session-AMBR Uplink | `1 Gbps` |
+| UE IPv4 Address | Leave Blank |
+| UE IPv6 Address | Leave Blank |
+| SMF IPv4 Address | Leave Blank |
+| SMF IPv6 Address | Leave Blank |
+| PCC Rules | Leave Blank |
+
+This APN is used for IMS/VoLTE registration.
+
+---
+
+#### Final Subscriber Configuration
+
+```
+Subscriber
+│
+├── IMSI : 001011234567895
+├── K    : 8baf473f2f8fd09487cccbd7097c6862
+├── OP   : 11111111111111111111111111111111
+├── AMF  : 8000
+│
+├── Session 1
+│     APN  : internet
+│     Type : IPv4
+│     QCI  : 9
+│     ARP  : 8
+│
+└── Session 2
+      APN  : ims
+      Type : IPv4
+      QCI  : 5
+      ARP  : 1
+```
+
+---
+
+#### Verification
+
+The subscriber credentials must exactly match the UE configuration on **PC-1**.
+
+| UE Configuration | Open5GS Subscriber |
+|------------------|--------------------|
+| IMSI | IMSI |
+| K | Subscriber Key (K) |
+| OP | Operator Key (OP) |
+| AMF | Authentication Management Field |
+
+---
+
+#### APN Mapping
+
+| APN | Purpose | UE Address Pool |
+|------|---------|-----------------|
+| `internet` | LTE Data | `192.168.100.0/24` |
+| `ims` | IMS / VoLTE | `192.168.101.0/24` |
+
+---
+
+#### Expected Topology
+
+```text
+PC-1 (10.195.138.30)
+
+srsUE
+   │
+   │ APN = internet
+   ▼
+srsENB
+   │
+   │ S1-MME
+   ▼
+
+PC-2 (10.195.138.20)
+
+Open5GS EPC
+│
+├── APN: internet → 192.168.100.0/24
+└── APN: ims      → 192.168.101.0/24
+
+           │
+           ▼
+
+     Kamailio IMS
+```
+
 
 ### 11.3 Provision via CLI (alternative)
 
@@ -781,9 +987,28 @@ Open Swagger UI: `http://10.195.138.20:8080/docs/`
 Follow the upstream order: **APN → AUC → SUBSCRIBER → IMS_SUBSCRIBER**.
 
 1. Create APNs `internet` and `ims` (once).
-2. Create AUC:
 
-```json
+Select apn -> Create new APN -> Press on Try it out. Then, in payload section use the below JSON and then press Execute
+```{
+  "apn": "internet",
+  "apn_ambr_dl": 0,
+  "apn_ambr_ul": 0
+}
+```
+Take note of apn_id specified in Response body under Server response for internet APN
+
+Repeat creation step for following payload
+```
+{
+  "apn": "ims",
+  "apn_ambr_dl": 0,
+  "apn_ambr_ul": 0
+}
+```
+2. Create AUC: select auc -> Create new AUC -> Press on Try it out. Then, in payload section use the below example JSON to fill in ki, opc and amf for your SIM and then press Execute
+
+```
+json
 {
   "ki": "8baf473f2f8fd09487cccbd7097c6862",
   "opc": "8e27b6af0e692e750f32667a3b14605d",
@@ -792,8 +1017,9 @@ Follow the upstream order: **APN → AUC → SUBSCRIBER → IMS_SUBSCRIBER**.
   "imsi": "001011234567895"
 }
 ```
+Take note of auc_id specified in Response body under Server response
 
-3. Create subscriber (replace `auc_id` / APN IDs with values returned by the API):
+3. Create subscriber (replace `auc_id` / APN IDs with values returned by the API):Next, select subscriber -> Create new SUBSCRIBER -> Press on Try it out. Then, in payload section use the below example JSON to fill in imsi, auc_id and apn_list for your SIM and then press Execute
 
 ```json
 {
@@ -807,8 +1033,12 @@ Follow the upstream order: **APN → AUC → SUBSCRIBER → IMS_SUBSCRIBER**.
   "ue_ambr_ul": 0
 }
 ```
+* auc_id is the ID of the AUC created in the previous steps
+* default_apn is the ID of the internet APN created in the previous steps
+* apn_list is the comma separated list of APN IDs allowed for the UE i.e. APN ID for internet and ims APN created in the previous steps
 
 4. Create IMS subscriber:
+   Finally, select ims_subscriber -> Create new IMS SUBSCRIBER -> Press on Try it out. Then, in payload section use the below example JSON to fill in imsi, msisdn, msisdn_list, scscf_peer, scscf_realm and scscf for your SIM/deployment and then press Execute
 
 ```json
 {
@@ -822,6 +1052,9 @@ Follow the upstream order: **APN → AUC → SUBSCRIBER → IMS_SUBSCRIBER**.
   "scscf_realm": "ims.mnc001.mcc001.3gppnetwork.org"
 }
 ```
+Replace imsi, msisdn and msisdn_list as per your programmed SIM
+
+Replace scscf_peer, scscf and scscf_realm as per your deployment
 
 **Purpose:** S-CSCF uses Diameter Cx against pyHSS during IMS registration.
 
