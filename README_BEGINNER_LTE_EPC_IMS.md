@@ -8,9 +8,11 @@
 | **PC-2** | Open5GS EPC + Kamailio IMS | `10.195.138.20` |
 
 This document teaches **concepts**.  
-Your step-by-step build/run commands live in [`README.md`](./README.md).
+Your step-by-step build/run commands live in [`README.md`](./README.md).  
+Prefer a slower narrative first? Start with [`README_UE_JOURNEY_LTE_IMS.md`](./README_UE_JOURNEY_LTE_IMS.md).
 
 Read this when you feel lost about *why* something exists.  
+Use the story guide when you want events in order.  
 Use `README.md` when you need to *do* something.
 
 ---
@@ -704,12 +706,13 @@ Use this as a study path. Check boxes only when you can explain *and* demonstrat
 
 ---
 
-## Relationship to the other README
+## Relationship to the other guides
 
 | File | Purpose |
 |------|---------|
 | [`README.md`](./README.md) | Build/run/configure the 2-PC lab (commands, file edits, troubleshooting) |
-| **This file** | Teach the telecom meaning behind those steps |
+| [`README_UE_JOURNEY_LTE_IMS.md`](./README_UE_JOURNEY_LTE_IMS.md) | Absolute-beginner story: one UE journey across PC-1 and PC-2 |
+| **This file** | Teach the telecom meaning behind those steps (concept reference)
 
 When `README.md` says “set `SGWU_ADVERTISE_IP=10.195.138.20`”, this file is where you learn **why**: because the eNB must send user-plane GTP-U to an address it can reach on the LAN, not to a Docker-internal IP on the other PC.
 
