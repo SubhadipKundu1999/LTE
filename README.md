@@ -4,6 +4,10 @@
 
 This tutorial adapts [herlesupreeth/docker_open5gs](https://github.com/herlesupreeth/docker_open5gs) for a **two physical PC** lab. It is written so you can follow it from a fresh Ubuntu install, copy commands, and understand **what each step does and why**.
 
+**New to EPC/IMS concepts?** Read the companion beginner guide first:
+
+* [`README_BEGINNER_LTE_EPC_IMS.md`](./README_BEGINNER_LTE_EPC_IMS.md) — teaches APN, PDN/IP allocation, EPC↔IMS integration, databases, and protocols using this same 2-PC lab
+
 Upstream repository (study this alongside this tutorial):
 
 ```text
