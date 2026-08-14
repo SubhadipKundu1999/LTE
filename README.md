@@ -1639,6 +1639,7 @@ docker logs pyhss -f
 ## 25. Testing SIP/VoLTE
 
 **Two phones / two UEs / lab SIP phones:** follow [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md).  
+**“Are we commercially ready if two UEs talk?”:** [`README_COMMERCIAL_UE_TO_UE.md`](./README_COMMERCIAL_UE_TO_UE.md) — LAN SIP phones do not count; two LTE-attached UEs pinging each other is the lab gate.  
 Do **not** install a second Kamailio or Asterisk on another PC and call that VoLTE. Use the IMS already started by `4g-volte-deploy.yaml`. srsUE does **not** place calls by itself (no IMS client).
 
 ### Signalling test (REGISTER)
