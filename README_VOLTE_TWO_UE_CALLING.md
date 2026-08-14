@@ -336,3 +336,5 @@ Asterisk between two SIP phones is a **PBX demo**. It does not exercise Cx, S-CS
 - [ ] (Later) those SIP packets on a UE TUN if you need “over LTE”
 
 When that checklist is green, you have **calling through this project’s Kamailio IMS**. Adding a second srsUE only proves a second **LTE modem**; adding commercial phones + USIM + RF is what turns it into **VoLTE between two UEs**.
+
+**Show this to a higher officer:** timed demo + evidence log in [`OFFICER_DEMO_EPC_IMS_TWO_UE.md`](./OFFICER_DEMO_EPC_IMS_TWO_UE.md).
