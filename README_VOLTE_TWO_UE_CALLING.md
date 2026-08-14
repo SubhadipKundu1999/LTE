@@ -16,11 +16,14 @@ This is the missing “second phone” chapter. Build/run commands for the **one
 | What is the fastest way to hear a call with extra PCs? | Two **Linphone** (or IMS-capable SIP) clients, two pyHSS IMS subscribers, both pointing at **P-CSCF**. |
 | What is real VoLTE (UE ↔ UE over LTE)? | Two **IMS-capable phones** (or srsUE **plus** a SIP client using the UE tunnel) with **IMS PDN**, USIM keys matching Open5GS + pyHSS, radio (SDR or two ZMQ eNBs). |
 
+If the goal is **“is this LTE core ready, proven only by UE-to-UE?”** (not LAN SIP phones), read [`README_COMMERCIAL_UE_TO_UE.md`](./README_COMMERCIAL_UE_TO_UE.md) first: Gate 1 is ping between two attached UE IPs; Gate 2 is voice on those tunnels. That proves the **prototype path**, not a commercial operator network.
+
 **Recommended order in your lab**
 
 1. Keep PC-1 / PC-2 LTE data working (attach + ping).  
 2. On extra PCs, get **two IMS clients** to REGISTER and **INVITE** through Kamailio (this document, Path A).  
-3. Only then add a **second LTE UE** (Path B) or commercial phones (Path C).
+3. Only then add a **second LTE UE** (Path B) or commercial phones (Path C).  
+4. For “commercial-shaped” proof, Path B + UE IP ping (and Path B + IMS on the TUN) — not Path A alone.
 
 ---
 

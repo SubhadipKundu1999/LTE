@@ -9,6 +9,7 @@ This tutorial adapts [herlesupreeth/docker_open5gs](https://github.com/herlesupr
 * [`README_UE_JOURNEY_LTE_IMS.md`](./README_UE_JOURNEY_LTE_IMS.md) — absolute-beginner **story walkthrough** (one UE from cold start → IP → IMS REGISTER on your 2 PCs)
 * [`README_BEGINNER_LTE_EPC_IMS.md`](./README_BEGINNER_LTE_EPC_IMS.md) — concept reference for APN, PDN/IP allocation, EPC↔IMS integration, databases, and protocols
 * [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md) — **two-party calling**: SIP phones, extra PCs, second software UE, vs real VoLTE (srsUE has no SIP stack)
+* [`README_COMMERCIAL_UE_TO_UE.md`](./README_COMMERCIAL_UE_TO_UE.md) — **UE-to-UE as the lab gate**: what two attached UEs prove, and why that is not a commercial network
 
 Upstream repository (study this alongside this tutorial):
 
