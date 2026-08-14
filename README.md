@@ -9,6 +9,7 @@ This tutorial adapts [herlesupreeth/docker_open5gs](https://github.com/herlesupr
 * [`README_UE_JOURNEY_LTE_IMS.md`](./README_UE_JOURNEY_LTE_IMS.md) — absolute-beginner **story walkthrough** (one UE from cold start → IP → IMS REGISTER on your 2 PCs)
 * [`README_BEGINNER_LTE_EPC_IMS.md`](./README_BEGINNER_LTE_EPC_IMS.md) — concept reference for APN, PDN/IP allocation, EPC↔IMS integration, databases, and protocols
 * [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md) — **two-party calling**: SIP phones, extra PCs, second software UE, vs real VoLTE (srsUE has no SIP stack)
+* [`OFFICER_DEMO_EPC_IMS_TWO_UE.md`](./OFFICER_DEMO_EPC_IMS_TWO_UE.md) — **officer demo**: prove EPC ready, Kamailio integrated, two-UE user/data plane (`scripts/officer_readiness_check.sh`)
 
 Upstream repository (study this alongside this tutorial):
 
@@ -53,6 +54,7 @@ https://github.com/herlesupreeth/docker_open5gs
 28. [Complete startup sequence](#28-complete-startup-sequence)
 29. [Complete shutdown sequence](#29-complete-shutdown-sequence)
 30. [Final verification checklist](#30-final-verification-checklist)
+31. [Officer demonstration](#31-officer-demonstration)
 
 ---
 
@@ -1907,6 +1909,22 @@ Data persistence notes:
 - [ ] IMS identities match MSISDN/IMSI
 - [ ] SIP REGISTER reaches P-CSCF and returns `200 OK`
 - [ ] Diameter Cx between S-CSCF and pyHSS succeeds
+
+---
+
+## 31. Officer demonstration
+
+To show a reviewer that **EPC is ready**, **Kamailio is integrated with EPC**, and **user/data plane between two UEs is ready**, follow the timed script:
+
+* [`OFFICER_DEMO_EPC_IMS_TWO_UE.md`](./OFFICER_DEMO_EPC_IMS_TWO_UE.md)
+
+On **PC-2** (inside `~/docker_open5gs`), copy and run:
+
+```bash
+bash officer_readiness_check.sh | tee /tmp/officer-readiness.log
+```
+
+The script prints PASS/FAIL for containers and S1/GTP-U ports. Two-UE ping and SIP INVITE remain live tests in that document (and in [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md)).
 
 ---
 
