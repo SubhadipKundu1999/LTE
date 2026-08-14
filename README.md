@@ -8,6 +8,7 @@ This tutorial adapts [herlesupreeth/docker_open5gs](https://github.com/herlesupr
 
 * [`README_UE_JOURNEY_LTE_IMS.md`](./README_UE_JOURNEY_LTE_IMS.md) — absolute-beginner **story walkthrough** (one UE from cold start → IP → IMS REGISTER on your 2 PCs)
 * [`README_BEGINNER_LTE_EPC_IMS.md`](./README_BEGINNER_LTE_EPC_IMS.md) — concept reference for APN, PDN/IP allocation, EPC↔IMS integration, databases, and protocols
+* [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md) — **two-party calling**: SIP phones, extra PCs, second software UE, vs real VoLTE (srsUE has no SIP stack)
 
 Upstream repository (study this alongside this tutorial):
 
@@ -46,7 +47,7 @@ https://github.com/herlesupreeth/docker_open5gs
 22. [Testing LTE attach](#22-testing-lte-attach)
 23. [Testing Internet/data connectivity](#23-testing-internetdata-connectivity)
 24. [IMS registration](#24-ims-registration)
-25. [Testing SIP/VoLTE](#25-testing-sipvolte)
+25. [Testing SIP/VoLTE](#25-testing-sipvolte) — two-party lab: [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md)
 26. [Packet capture and troubleshooting](#26-packet-capture-and-troubleshooting)
 27. [Common errors and fixes](#27-common-errors-and-fixes)
 28. [Complete startup sequence](#28-complete-startup-sequence)
@@ -1636,6 +1637,9 @@ docker logs pyhss -f
 
 ## 25. Testing SIP/VoLTE
 
+**Two phones / two UEs / lab SIP phones:** follow [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md).  
+Do **not** install a second Kamailio or Asterisk on another PC and call that VoLTE. Use the IMS already started by `4g-volte-deploy.yaml`. srsUE does **not** place calls by itself (no IMS client).
+
 ### Signalling test (REGISTER)
 
 Use `sngrep` on PC-2:
@@ -1650,7 +1654,7 @@ docker exec -it pcscf bash -lc 'apt-get update && apt-get install -y sngrep; sng
 
 ### Call test (INVITE)
 
-Requires two IMS endpoints provisioned in pyHSS/Open5GS. Media flows via RTPEngine (`rtpengine` container). Exact softphone settings beyond P-CSCF/realm/IMPI/IMPU **must be verified** for the client you choose.
+Requires **two** IMS endpoints in pyHSS (second example MSISDN `9076543211` in the two-UE guide). Media flows via RTPEngine (`rtpengine` container). Use Linphone or another **IMS-AKA** client; a password-only SIP phone usually fails the `401` AKA challenge. Exact softphone settings **must be verified** for the client you choose.
 
 ### Realistic expectation for this ZMQ lab
 

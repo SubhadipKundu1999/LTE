@@ -9,7 +9,8 @@
 
 This document teaches **concepts**.  
 Your step-by-step build/run commands live in [`README.md`](./README.md).  
-Prefer a slower narrative first? Start with [`README_UE_JOURNEY_LTE_IMS.md`](./README_UE_JOURNEY_LTE_IMS.md).
+Prefer a slower narrative first? Start with [`README_UE_JOURNEY_LTE_IMS.md`](./README_UE_JOURNEY_LTE_IMS.md).  
+Need **two UEs or SIP phones calling**? See [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md).
 
 Read this when you feel lost about *why* something exists.  
 Use the story guide when you want events in order.  

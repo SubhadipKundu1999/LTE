@@ -15,6 +15,7 @@ It deliberately goes slower than the concept reference guide.
 | **This file** | “Tell me what happens, in order, like I’m new” |
 | [`README_BEGINNER_LTE_EPC_IMS.md`](./README_BEGINNER_LTE_EPC_IMS.md) | Concept lookup (APN, PDN, DBs, protocols) |
 | [`README.md`](./README.md) | Exact commands, configs, troubleshooting |
+| [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md) | Two-party IMS/VoLTE call with extra PCs and SIP phones |
 
 ---
 
