@@ -45,7 +45,7 @@ https://github.com/herlesupreeth/docker_open5gs
 19. [srsRAN UE configuration](#19-srsran-ue-configuration)
 20. [Connecting eNodeB on PC-1 to MME on PC-2](#20-connecting-enodeb-on-pc-1-to-mme-on-pc-2)
 21. [Connecting UE → eNodeB → EPC](#21-connecting-ue--enodeb--epc)
-22. [Testing LTE attach](#22-testing-lte-attach)
+22. [Testing LTE attach](#22-testing-lte-attach) — see also [`ATTACH_SUCCESS_WALKTHROUGH.md`](./ATTACH_SUCCESS_WALKTHROUGH.md), [`troubleshoot.md`](./troubleshoot.md)
 23. [Testing Internet/data connectivity](#23-testing-internetdata-connectivity)
 24. [IMS registration](#24-ims-registration)
 25. [Testing SIP/VoLTE](#25-testing-sipvolte) — two-party lab: [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md)
@@ -1516,6 +1516,28 @@ docker exec -it srsue_zmq ip route
 
 **Expected result:** `tun_srsue` (or similar) with `192.168.100.x`.
 
+### RRC IDLE after attach is often success
+
+After attach, srsENB may release the radio when its **RRC inactivity timer** expires (often ~30s with no traffic). UE then shows:
+
+```text
+Received RRC Connection Release ...
+RRC IDLE
+```
+
+MME may log `UE Context Release` and start the Mobile Reachable timer. That means **radio idle**, not “detach failed” — the UE can still be EMM-REGISTERED with `192.168.100.x` on `tun_srsue`.
+
+**Prove it before restarting the UE:**
+
+```bash
+docker exec -it srsue_zmq ping -c 5 8.8.8.8
+```
+
+Ping from IDLE should wake RRC (Service Request) and succeed if user plane is OK.
+
+Worked example of a full successful attach → IDLE log set: [`ATTACH_SUCCESS_WALKTHROUGH.md`](./ATTACH_SUCCESS_WALKTHROUGH.md).  
+If release happens in ~1s, attach never gets an IP, or restart never does RACH: [`troubleshoot.md`](./troubleshoot.md).
+
 ### On MME / HSS (PC-2)
 
 ```bash
@@ -1532,6 +1554,8 @@ docker logs sgwu 2>&1 | tail -50
 docker logs upf 2>&1 | tail -50
 docker exec -it upf ip addr show ogstun
 ```
+
+**Note:** UPF may log `Invalid packet [IP version:6]` while the session is IPv4-only (`PDN-Type[1]`). That drop is harmless for a basic internet attach.
 
 **If attach fails, check:**
 
