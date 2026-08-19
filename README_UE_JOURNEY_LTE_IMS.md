@@ -353,6 +353,8 @@ So:
 ### Why operators use an `ims` APN instead of only `internet`
 
 You *could* point a softphone at P-CSCF over the internet APN in a lab toy.  
+**srsUE must still attach with APN `internet`.** Setting the software UE NAS APN to `ims` usually drops the RRC session. For a desk SIP phone (Digest password), use Asterisk over `tun_srsue`; for IMS AKA, use Kamailio — [`README_IMS_APN_DISCONNECT_AND_ASTERISK.md`](./README_IMS_APN_DISCONNECT_AND_ASTERISK.md).
+
 Operators usually want a dedicated IMS PDN because they need:
 
 * predictable QoS (signalling vs voice media)  

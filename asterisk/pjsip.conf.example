@@ -1,0 +1,68 @@
+; Lab PJSIP for SIP-over-LTE-data (srsUE pjsua + desk phone).
+; Copy to /etc/asterisk/pjsip.conf after checking host UDP/5060 is free.
+; UE traffic is NATed by Open5GS UPF (ogstun) — keep rewrite_contact / symmetric RTP.
+
+[global]
+type = global
+
+[transport-udp]
+type = transport
+protocol = udp
+bind = 0.0.0.0:5060
+external_media_address = 10.195.138.20
+external_signaling_address = 10.195.138.20
+local_net = 10.195.138.0/24
+local_net = 192.168.100.0/24
+local_net = 172.22.0.0/24
+
+[1001]
+type = endpoint
+context = from-internal
+disallow = all
+allow = ulaw
+allow = alaw
+auth = 1001
+aors = 1001
+direct_media = no
+rtp_symmetric = yes
+force_rport = yes
+rewrite_contact = yes
+ice_support = no
+
+[1001]
+type = auth
+auth_type = userpass
+username = 1001
+password = 1001pass
+
+[1001]
+type = aor
+max_contacts = 2
+remove_existing = yes
+qualify_frequency = 30
+
+[1002]
+type = endpoint
+context = from-internal
+disallow = all
+allow = ulaw
+allow = alaw
+auth = 1002
+aors = 1002
+direct_media = no
+rtp_symmetric = yes
+force_rport = yes
+rewrite_contact = yes
+ice_support = no
+
+[1002]
+type = auth
+auth_type = userpass
+username = 1002
+password = 1002pass
+
+[1002]
+type = aor
+max_contacts = 2
+remove_existing = yes
+qualify_frequency = 30

@@ -9,6 +9,7 @@ This tutorial adapts [herlesupreeth/docker_open5gs](https://github.com/herlesupr
 * [`README_UE_JOURNEY_LTE_IMS.md`](./README_UE_JOURNEY_LTE_IMS.md) — absolute-beginner **story walkthrough** (one UE from cold start → IP → IMS REGISTER on your 2 PCs)
 * [`README_BEGINNER_LTE_EPC_IMS.md`](./README_BEGINNER_LTE_EPC_IMS.md) — concept reference for APN, PDN/IP allocation, EPC↔IMS integration, databases, and protocols
 * [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md) — **two-party calling**: SIP phones, extra PCs, second software UE, vs real VoLTE (srsUE has no SIP stack)
+* [`README_IMS_APN_DISCONNECT_AND_ASTERISK.md`](./README_IMS_APN_DISCONNECT_AND_ASTERISK.md) — **`apn=ims` disconnects srsUE** (keep `internet`) and **Asterisk** SIP from `tun_srsue` to a desk phone
 * [`OFFICER_DEMO_EPC_IMS_TWO_UE.md`](./OFFICER_DEMO_EPC_IMS_TWO_UE.md) — **officer demo**: prove EPC ready, Kamailio integrated, two-UE user/data plane (`scripts/officer_readiness_check.sh`)
 
 Upstream repository (study this alongside this tutorial):
@@ -48,7 +49,7 @@ https://github.com/herlesupreeth/docker_open5gs
 22. [Testing LTE attach](#22-testing-lte-attach)
 23. [Testing Internet/data connectivity](#23-testing-internetdata-connectivity)
 24. [IMS registration](#24-ims-registration)
-25. [Testing SIP/VoLTE](#25-testing-sipvolte) — two-party lab: [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md)
+25. [Testing SIP/VoLTE](#25-testing-sipvolte) — two-party IMS: [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md); `apn=ims` + Asterisk: [`README_IMS_APN_DISCONNECT_AND_ASTERISK.md`](./README_IMS_APN_DISCONNECT_AND_ASTERISK.md)
 26. [Packet capture and troubleshooting](#26-packet-capture-and-troubleshooting)
 27. [Common errors and fixes](#27-common-errors-and-fixes)
 28. [Complete startup sequence](#28-complete-startup-sequence)
@@ -1132,7 +1133,7 @@ upf:
 **Subscriber requirement:** Open5GS subscriber must include APN `ims` (section 11).
 
 **Important limitation (srsUE):**  
-stock `ue_zmq.conf` requests **`internet` only**. Full IMS PDN + SIP stack is **not** a complete out-of-the-box VoLTE UE in srsRAN_4G the way a commercial phone is. Section 24 explains what works and what you must verify.
+stock `ue_zmq.conf` requests **`internet` only**. Do **not** set `apn = ims` on srsUE as the attach APN: IMS is QCI 5, needs PCRF/`ogstun2`, and srsUE only brings up **one** PDN, so the UE typically **disconnects**. Troubleshooting, QCI 5 notes, and **Asterisk** (SIP over `tun_srsue` to a LAN phone) are in [`README_IMS_APN_DISCONNECT_AND_ASTERISK.md`](./README_IMS_APN_DISCONNECT_AND_ASTERISK.md). Full IMS PDN + SIP stack is **not** a complete out-of-the-box VoLTE UE in srsRAN_4G the way a commercial phone is. Section 24 explains Kamailio IMS.
 
 ---
 
@@ -1379,6 +1380,8 @@ imei = 353490069873319
 apn = internet
 apn_protocol = ipv4
 ```
+
+Leave `apn = internet`. If you set `apn = ims`, attach/ERAB often fails and the UE drops — see [`README_IMS_APN_DISCONNECT_AND_ASTERISK.md`](./README_IMS_APN_DISCONNECT_AND_ASTERISK.md).
 
 ### Host networking for UE compose
 
@@ -1640,7 +1643,9 @@ docker logs pyhss -f
 ## 25. Testing SIP/VoLTE
 
 **Two phones / two UEs / lab SIP phones:** follow [`README_VOLTE_TWO_UE_CALLING.md`](./README_VOLTE_TWO_UE_CALLING.md).  
-Do **not** install a second Kamailio or Asterisk on another PC and call that VoLTE. Use the IMS already started by `4g-volte-deploy.yaml`. srsUE does **not** place calls by itself (no IMS client).
+Do **not** install a second Kamailio on another PC and call that VoLTE. Use the IMS already started by `4g-volte-deploy.yaml`. srsUE does **not** place calls by itself (no IMS client).
+
+**Password SIP phone + srsUE:** that is Asterisk on the LAN and pjsua on `tun_srsue` with **`apn=internet`**. Do not set `apn=ims` on srsUE (it disconnects). Guide: [`README_IMS_APN_DISCONNECT_AND_ASTERISK.md`](./README_IMS_APN_DISCONNECT_AND_ASTERISK.md). That path is SIP over LTE data, not IMS VoLTE.
 
 ### Signalling test (REGISTER)
 
@@ -1769,6 +1774,8 @@ tail -f srslte/ue.log
 | Containers unhealthy on PC-2 | first-boot DB races | wait; `docker compose ... restart` failed service; check `mysql`/`dns` logs |
 | UE ping fails | PC-2 forwarding/NAT/firewall | `sysctl ip_forward=1`, check UPF `ogstun`, capture UDP/2152 |
 | IMS REGISTER fails | pyHSS subscriber missing / DNS / unreachable P-CSCF | provision pyHSS; verify DNS; ensure route to `PCSCF_IP` |
+| srsUE disconnects after `apn=ims` | IMS used as **default** PDN (QCI 5 / PCRF / no dual-APN) | Set `apn=internet`; see [`README_IMS_APN_DISCONNECT_AND_ASTERISK.md`](./README_IMS_APN_DISCONNECT_AND_ASTERISK.md) |
+| Want SIP phone ↔ “srsUE” | srsUE has no SIP stack | Asterisk + pjsua on `tun_srsue` (same doc); IMS AKA uses Kamailio, not Asterisk |
 
 ---
 
