@@ -360,6 +360,8 @@ VoLTE means:
 
 ### Why not just “SIP over the internet APN”?
 
+srsUE in this lab should request **`internet` only**. Setting the UE NAS APN to **`ims`** usually **disconnects** the software UE (single PDN, QCI 5, PCRF). Use Asterisk for a desk-phone call over `tun_srsue`, or Kamailio for IMS AKA — [`README_IMS_APN_DISCONNECT_AND_ASTERISK.md`](./README_IMS_APN_DISCONNECT_AND_ASTERISK.md).
+
 You *can* run a softphone over `internet`, but operators use a dedicated **ims** APN because they need:
 
 * known QoS (signalling QCI 5, voice QCI 1)

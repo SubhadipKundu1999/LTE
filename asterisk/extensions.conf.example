@@ -1,0 +1,20 @@
+; Lab dialplan: 1001 (UE SIP client) <-> 1002 (LAN SIP phone).
+; Copy to /etc/asterisk/extensions.conf (or #include from your distro file).
+
+[general]
+static = yes
+writeprotect = no
+
+[from-internal]
+exten => 1001,1,NoOp(Call to UE SIP client)
+ same => n,Dial(PJSIP/1001,30)
+ same => n,Hangup()
+
+exten => 1002,1,NoOp(Call to LAN SIP phone)
+ same => n,Dial(PJSIP/1002,30)
+ same => n,Hangup()
+
+; Optional echo test
+exten => 600,1,Answer()
+ same => n,Echo()
+ same => n,Hangup()

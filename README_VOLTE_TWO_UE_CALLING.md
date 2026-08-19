@@ -15,6 +15,8 @@ This is the missing “second phone” chapter. Build/run commands for the **one
 | Can we use the lab SIP phones? | **Yes, for IMS calling**, if they can do **IMS AKA** (or you use Linphone instead). A cheap MD5-only SIP phone will **not** complete a 3GPP IMS REGISTER. |
 | What is the fastest way to hear a call with extra PCs? | Two **Linphone** (or IMS-capable SIP) clients, two pyHSS IMS subscribers, both pointing at **P-CSCF**. |
 | What is real VoLTE (UE ↔ UE over LTE)? | Two **IMS-capable phones** (or srsUE **plus** a SIP client using the UE tunnel) with **IMS PDN**, USIM keys matching Open5GS + pyHSS, radio (SDR or two ZMQ eNBs). |
+| srsUE disconnects if `apn=ims`? | **Yes, typically.** Keep `apn=internet`. Details: [`README_IMS_APN_DISCONNECT_AND_ASTERISK.md`](./README_IMS_APN_DISCONNECT_AND_ASTERISK.md). |
+| Can srsUE call a password SIP phone (Asterisk)? | **Yes, as SIP over LTE data:** attach internet APN, run pjsua on `tun_srsue`, register to Asterisk. That is **not** IMS/VoLTE. |
 
 **Recommended order in your lab**
 
@@ -298,6 +300,8 @@ ZMQ srsUE cannot replace this path. Extra PCs help as eNB hosts or as wired IMS 
 | Publish SIP/RTP on PC-2 if phones are on the LAN | Expect `172.22.0.21` to work from a SIP phone with no route/DNAT |
 
 Asterisk between two SIP phones is a **PBX demo**. It does not exercise Cx, S-CSCF, or this project’s IMS.
+
+To **intentionally** run that PBX demo **through the UE tunnel** (srsUE pjsua `1001` → desk phone `1002`), follow [`README_IMS_APN_DISCONNECT_AND_ASTERISK.md`](./README_IMS_APN_DISCONNECT_AND_ASTERISK.md). Keep Kamailio on PC-2 for IMS; put Asterisk on the LAN with a free SIP port.
 
 ---
 
